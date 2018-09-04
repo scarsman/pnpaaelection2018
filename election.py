@@ -1,6 +1,4 @@
-from orator import DatabaseManager
 from config import *
-from flask import Flask, abort, render_template,request, send_file, jsonify,url_for,redirect
 
 
 import json
@@ -11,6 +9,12 @@ import hashlib
 import csv
 
 import time
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.utils import formataddr
+from email.header import Header
 
 
 db = DatabaseManager(DATABASES)
