@@ -40,5 +40,6 @@ EOD
 
 #reload system daemon
 /bin/systemctl --system daemon-reload
+/bin/systemctl start pnpaaelection
 #reload nginx
 /etc/init.d/nginx restart
