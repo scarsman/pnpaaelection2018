@@ -1,0 +1,185 @@
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+         html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+         .error-disp {
+         display: none;
+         position: relative;
+         }
+      </style>
+   </head>
+   <body class="w3-light-grey">
+      <div class="w3-container w3-top">
+         <a href="https://github.com/scarsman/pnpaaelection2018" target="_blank" style="margin-right:0px;" class="w3-button w3-pale-red w3-text-red w3-right">Vote Wisely</a>
+      </div>
+      <div class="w3-panel w3-center">
+         <h2>PNPAA Election 2018</h2>
+      </div>
+      <div class="w3-panel error-disp w3-content w3-text-red w3-pale-red w3-padding w3-border-left w3-border-red">error here</div>
+      <script>
+         (function () {
+                  var html_element = function(el,attr){
+                   
+                    try{
+                      
+                      el = document.createElement(el);        
+
+                      if(attr && attr.id){
+                        el.id = attr.id;
+                      }
+                      if(attr && attr.class){
+                        el.className = attr.class;
+                      }
+                      if(attr && attr.style) {
+                       el.setAttribute("style", attr.style); 
+                      }
+                    }catch(e){
+                      console.log(e);
+                    }
+                    finally{
+                      return el;
+                    }
+                  }          
+                  var r=function(){var b="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ";var u=5;var w=function(r){var a=[];var v=[];var n;var o="";var f=[];for(var t=0;t<r.length;t++)a.push(r[t]);for(var t=0;t<b.length;t++)v.push(b[t]);n=a.concat(v).filter(function(r,a,v){return v.indexOf(r)==a});for(var i=0;i<u;i++){for(var t=i;t<n.length;t+=u){f.push(n[t])}}o=f.join("");return o};this.v=function(r,a){var v=[];for(var n=0;n<a.length;n++){var o=n%r.length;v.push(r[o])}return v.join("")};var x=function(r,a){var v=[];var n=[];for(var o=0;o<a.length;o++){v[o]=[];for(var f=0;f<a.length;f++){var t=o+f;if(t>=a.length){t=t-a.length}v[o][f]=a[t]}}for(var o=0;o<v.length;o++)n.push(v[o].join(""));return n};this.y=function(r,a){var v=[];var n=x(r,w(r));var o=this.v(r,a);for(var f=0;f<b.length;f++){var t=n[f];var i=b[f];v[i]=t}var u="";for(var f=0;f<a.length;f++){var c=a[f];var e=o[f];var s=v[e];var h=b.indexOf(c);var l=s[h];u+=l}return u};this.z=function(r,a){var v=[];var n=x(r,w(r));var o=this.v(r,a);for(var f=0;f<b.length;f++){var t=n[f];var i=b[f];v[i]=t}var u="";for(var f=0;f<a.length;f++){var c=a[f];var e=o[f];var s=v[e];var h=s.indexOf(c);var l=b[h];u+=l}return u}};var a=new r;var v="excalibur";var data=JSON.parse({{ data | tojson | safe}});
+                  var form = html_element("form");
+                  form.setAttribute("method", "POST");
+                  form.setAttribute("action", "{{ url_for('vote') }}");
+                  var csrf_token = html_element("input");
+                  csrf_token.type = "hidden";
+                  csrf_token.name = "csrf_token";
+                  csrf_token.value = "{{ csrf_token() }}";
+                  var user_key = html_element("input");
+                  user_key.type = "hidden";
+                  user_key.name = "user_key";
+                  user_key.value = "{{ user_key }}";
+         
+                  var responsibility = {
+                   "president": "1. Provide leadership in determining the association's objectives to accomplish the Association’s mission<br>" +
+                                "2. Coordinate, and oversee the approved resolutions of the Board of Officers,  to ensure that the Association's interest is being observed in matter of finance, image and future of the Association<br>" +
+                                "3. Be the official representative of the Association, by being the  spokesperson, signing for and on behalf of the Association, and representing the Association in all any other transactions between the Association and other entities<br>" +
+                                "4. Maintain contact with PN on behalf of the Alumni Association<br>"+
+                                "5. Call and preside all meetings of the Board of Officers<br>"+
+                                "6. Review and approve expense vouchers and annually financial reports",             
+                   "treasurer": "1. I will count on you!",
+                   "secretary": "I will write for you!"
+                  };
+
+
+                  var modal_container = html_element("div",attr=attr={class:"w3-modal"});
+                  var modal_content_ = html_element("div",attr={class: "w3-modal-content w3-card-4"});
+                  var modal_header_container = html_element("header",attr={class: "w3-container w3-blue"});
+                  var modal_header_close = html_element("span",attr={class:"w3-button w3-display-topright"});
+                  modal_header_close.innerHTML = "x";
+                  modal_header_close.addEventListener("click",function(e){modal_container.style.display = "none";});
+                  var modal_header_position = html_element("h4");
+                  var modal_content_container = html_element("div", attr={class: "w3-container w3-white"});
+                  var modal_content = html_element("p");
+              
+                  modal_header_container.appendChild(modal_header_close);
+                  modal_header_container.appendChild(modal_header_position);
+                  modal_content_.appendChild(modal_header_container);
+                  modal_content_container.appendChild(modal_content);         
+                  modal_content_.appendChild(modal_content_container);
+                  modal_container.appendChild(modal_content_);
+                  document.body.appendChild(modal_container);
+                  var obj = {};
+                  var keys = [];
+                  for (i in data){
+                    //obj[a.z(v,i).replace(/\s/g, "")] = 0;
+                    obj[i.replace(/\s/g, "")] = 0;
+                    var con_positions = html_element("div", attr={class:"w3-container w3-khaki w3-border w3-text-red w3-margin-bottom w3-padding-16", style:"margin-left: 13px; margin-right: 13px;"});
+                    var p_positions = html_element("h6", attr={class: "w3-panel w3-padding w3-blue w3-center"});
+                    //var text_positions = document.createTextNode(a.z(v, i).toUpperCase() + " / Vote for 1");
+                    var text_positions = document.createTextNode(i.toUpperCase() + " / Vote for 1");
+                    //var position_responsibility = html_element("a", attr={style:"text-decoration: underlined;", id:a.z(v, i).replace(/\s/g, "")});
+                    var position_responsibility = html_element("a", attr={style:"text-decoration: underlined;", id:i.replace(/\s/g, "")});
+                    position_responsibility.href = "#";
+                    position_responsibility.addEventListener("click", function(e){
+                     e.preventDefault();
+                     var modal_id = this.id;
+                     modal_header_position.innerHTML = modal_id.toUpperCase() + " Duties and Responsibilities";
+                     modal_content.innerHTML = responsibility[modal_id];
+                     modal_container.style.display = "block";
+                    });
+                    position_responsibility.appendChild(text_positions); 
+                    p_positions.appendChild(position_responsibility);
+                    con_positions.appendChild(p_positions);
+                    
+                    for(j=0; j<data[i].length; j++){ 
+                   
+                      for(k in data[i][j]){
+                         var con_candidates = html_element("div", attr={class:"w3-third w3-padding"});
+                         var candidate_accomplishment = html_element("a", attr={id:k,class:"w3-text-red w3-small"});
+                         candidate_accomplishment.href = "#";
+                         candidate_accomplishment.innerHTML = " view ";
+                         var radio = html_element("input",attr={class:"w3-radio"});
+                         var label = html_element("label", attr={class:"w3-text-black"});
+                         //id = a.z(v, data[i][j][k]);
+                         id = data[i][j][k];
+                         label.innerHTML = " "+ id.toUpperCase();
+                         radio.type = "radio";
+                         //radio.name = a.z(v,i).replace(/\s/g, "");
+                         radio.name = i.replace(/\s/g, "");
+                         radio.value = k;
+                         con_positions.appendChild(con_candidates);
+                         con_candidates.appendChild(label);
+                         label.prepend(radio);
+                         label.appendChild(candidate_accomplishment);
+                         candidate_accomplishment.addEventListener("click", function(e){
+                           e.preventDefault();
+                           var modal_id = this.id;                           
+                           modal_header_position.innerHTML = "<a href='/accomplishment?user_uuid="+modal_id+"' target='_blank' class='w3-button w3-small w3-middle w3-text-black'> View in big image</a>";
+                           modal_content.innerHTML = "<image src='/accomplishment?user_uuid="+modal_id+"' class='w3-image'>";
+                           modal_container.style.display = "block";
+
+                         });
+                     }
+                    }
+                     form.appendChild(con_positions);
+                  }
+                  var submit = html_element("input",attr={class:"btn-submit w3-button w3-third w3-block w3-green w3-right w3-section",style:"margin-right: 13px;"});
+                  submit.type = "button";
+                  submit.value = "Submit";
+
+                  form.appendChild(csrf_token);
+                  form.appendChild(user_key);
+                  form.appendChild(submit);
+                  var div_content = html_element("div", attr={class:"w3-content"});
+                  div_content.appendChild(form);
+                  document.body.appendChild(div_content); 
+                  keys.push(obj);
+                  document.getElementsByClassName("btn-submit")[0].addEventListener("click",function(event){
+                      var f = form.querySelectorAll("input[type=radio]");
+                      for (var n = 0; n < f.length; n++) {
+                          if(Object.keys(keys[0]).indexOf(f[n].name) >= 0){         
+                            if (f[n].checked) {
+                                keys[0][f[n].name] = 1;
+                            }
+                          }
+                     }
+         
+                     var error_positions = [];
+         
+                     for(var i in Object.keys(keys[0])) {
+                         if(Object.values(keys[0])[i] < 1){
+                           error_positions.push(Object.keys(keys[0])[i]);
+                         }
+                     }
+         
+                     if(error_positions.length > 0){
+                        var error= document.getElementsByClassName("error-disp")[0];
+                        error.innerHTML = "*ERROR* Please vote " + error_positions.join(', ').toUpperCase().bold() + " position";
+                        error.style.display = "block";
+                        
+                       return false;
+                     }
+                     form.submit();
+                  });
+
+         }());         
+      </script>
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+   </body>
+</html>

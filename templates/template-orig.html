@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+      .error-disp {
+        display: none;
+        position: relative;
+      }
+    </style>
+  </head>
+  <body class="w3-light-grey">
+    <div class="w3-container w3-top">
+      <a href="https://github.com/scarsman/pnpaaelection" target="_blank" style="margin-right:0px;" class="w3-button w3-pale-red w3-text-red w3-right">Vote Wisely</a>
+    </div>
+    <div class="w3-panel w3-center"><h2>PNPAA Election 2018</h2></div>
+    <div class="w3-panel error-disp w3-content w3-text-red w3-pale-red w3-padding w3-border-left w3-border-red">error here</div>
+      <script>
+         var data = JSON.parse({{ data | tojson | safe}});
+         var form = document.createElement("form");
+         form.setAttribute("method", "POST");
+         form.setAttribute("action", "{{ url_for('vote') }}");
+         var csrf_token = document.createElement("input");
+         csrf_token.type = "hidden";
+         csrf_token.name = "csrf_token";
+         csrf_token.value = "{{ csrf_token() }}";
+         var user_key = document.createElement("input");
+         user_key.type = "hidden";
+         user_key.name = "user_key";
+         user_key.value = "{{ user_key }}";
+
+         var responsibility = {
+         	"president": "1. Provide leadership in determining the association's objectives to accomplish the Association’s mission<br>" +
+         	             "2. Coordinate, and oversee the approved resolutions of the Board of Officers,  to ensure that the Association's interest is being observed in matter of finance, image and future of the Association<br>" +
+         	             "3. Be the official representative of the Association, by being the  spokesperson, signing for and on behalf of the Association, and representing the Association in all any other transactions between the Association and other entities<br>" +
+         	             "4. Maintain contact with PN on behalf of the Alumni Association<br>"+
+         	             "5. Call and preside all meetings of the Board of Officers<br>"+
+         	             "6. Review and approve expense vouchers and annually financial reports",             
+         	"committeeheads": "1. Propose activities to continue the interaction within the alumni network not limited to creating committees for any activities suggested by any alumni<br>"+
+         				 "2. Responsible for overseeing status of all committees, assisting and facilitating of activities of each committee and send to Vice President for proposal and initial approval<br>"+
+         				 "3. Coordinate with administration for approval of activities and plotting for funds allocation",
+         	"secretary": "I will rewrite you"
+         };
+
+         var modal_container = document.createElement("div");
+         modal_container.className = "w3-modal";
+         
+         var modal_content_ = document.createElement("div");
+         modal_content_.className = "w3-modal-content w3-card-4";
+
+         var modal_header_container = document.createElement("header");
+         modal_header_container.className = "w3-container w3-blue";
+         
+         var modal_header_close = document.createElement("span");
+         modal_header_close.className = "w3-button w3-display-topright";
+         modal_header_close.innerHTML = "x";
+         modal_header_close.addEventListener("click",function(e){
+         	modal_container.style.display = "none";
+         });
+         
+         var modal_header_position = document.createElement("h4");
+
+         var modal_content_container = document.createElement("div");
+         modal_content_container.className = "w3-container w3-white";
+         
+         var modal_content = document.createElement("p");
+         
+         modal_header_container.appendChild(modal_header_close);
+         modal_header_container.appendChild(modal_header_position);
+         modal_content_.appendChild(modal_header_container);
+         modal_content_container.appendChild(modal_content);         
+         modal_content_.appendChild(modal_content_container);
+         modal_container.appendChild(modal_content_);
+
+         document.body.appendChild(modal_container);
+
+
+         var keys = [];
+         var obj = {};
+         for (i in data){
+           obj[i.replace(/\s/g, "")] = 0;
+           var div_positions = document.createElement("div");
+           div_positions.className = "w3-container w3-yellow w3-border w3-text-red w3-margin-bottom w3-padding-16";
+           div_positions.style.marginLeft = "13px";
+           div_positions.style.marginRight = "13px";
+           var p_positions = document.createElement("h6");
+           p_positions.className = "w3-panel w3-padding w3-blue w3-center";
+           var text_positions = document.createTextNode(i.toUpperCase() + " / Vote for 1");
+           var position_responsibility = document.createElement("a");
+           position_responsibility.href = "#";
+           position_responsibility.id = i.replace(/\s/g, "") ;
+           position_responsibility.style.textDecoration = "underlined";
+           position_responsibility.addEventListener("click", function(e){
+           	e.preventDefault();
+           	var modal_id = this.id;
+           	modal_header_position.innerHTML = modal_id.toUpperCase() + " Duties and Responsibilities";
+           	modal_content.innerHTML = responsibility[modal_id];
+           	modal_container.style.display = "block";
+           });
+
+           position_responsibility.appendChild(text_positions); 
+           p_positions.appendChild(position_responsibility);
+           div_positions.appendChild(p_positions);
+
+           for(j=0; j<data[i].length; j++){ 
+          
+             for(k in data[i][j]){
+                var div_candidates = document.createElement("div");
+                div_candidates.className = "w3-quarter w3-padding";
+                var radio = document.createElement("input");
+                var label = document.createElement("label");
+                label.className = "w3-text-black ";
+                label.innerHTML = " "+ (data[i][j][k]);
+                radio.type = "radio";
+                radio.name = i.replace(/\s/g, "") ;
+                radio.value = k;
+                radio.className = "w3-radio";
+                label.prepend(radio);
+                div_candidates.appendChild(label);
+                div_positions.appendChild(div_candidates);
+            }
+           }
+            form.appendChild(div_positions);
+         }
+         var submit = document.createElement("input");
+         submit.type = "button";
+         submit.value = "Submit";
+         submit.className = "btn-submit w3-button w3-third w3-block w3-green w3-right w3-section";
+         submit.style.marginRight = "13px";
+         form.appendChild(csrf_token);
+         form.appendChild(user_key);
+         form.appendChild(submit);
+         var div_content = document.createElement("div");
+         div_content.className = "w3-content";
+         div_content.appendChild(form);
+         document.body.appendChild(div_content);
+
+         keys.push(obj);
+         document.getElementsByClassName("btn-submit")[0].addEventListener("click",function(event){
+             var f = form.querySelectorAll("input[type=radio]");
+
+             for (var n = 0; n < f.length; n++) {
+
+                 if(Object.keys(keys[0]).indexOf(f[n].name) >= 0){
+
+                   if (f[n].checked) {
+                       keys[0][f[n].name] = 1;
+                   }
+                 }
+            }
+
+            var error_positions = [];
+
+            for(var i in Object.keys(keys[0])) {
+                if(Object.values(keys[0])[i] < 1){
+                  error_positions.push(Object.keys(keys[0])[i]);
+                }
+            }
+
+            if(error_positions.length > 0){
+               var error= document.getElementsByClassName("error-disp")[0];
+               error.innerHTML = "*ERROR* Please vote " + error_positions.join(', ').toUpperCase().bold() + " position";
+               error.style.display = "block";
+              return false;
+            }
+
+            form.submit();
+         });
+
+      </script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  </body>
+</html>

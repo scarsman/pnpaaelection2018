@@ -1,0 +1,50 @@
+
+DATABASES = {
+	'mysql': {
+		'driver': 'mysql',
+		'host': 'localhost',
+		'database': 'elections',
+		'user': 'pol',
+		'password': 'pass',
+		'prefix': '',
+		'use_unicode': True,
+		'charset' : 'utf8'
+	}
+}
+CANDIDATES_IMAGE_DIRECTORY = "/home/hperpo/Desktop/elections/images"
+SECRET_KEY = "secret"
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USER = "user@gmail.com"
+SMTP_USER_PASSWORD = "pass"
+CC_EMAIL = "hperpo@gmail.com"
+
+ADMIN_USER = "admin"
+ADMIN_PASSWORD = "pass"
+#symmetric - vigenere
+SHIFT_BLOCK = 5
+ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ '
+PASSWORD = "hello world"
+
+#asymmetric
+PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
+MIICXQIBAAKBgQC4kYCemK/gUqi+/j5Pk+N1UozfRPr4BN2zeTAWq8iIirZ+dFT0
+ziOBh0N27fsjk+98oKrp9oXR7PBBaUV2LpFvgHUCRAGfDTZ6cx+gPaPeBTock791
+lDegh73bXBGshTbD+C1Gm8UxAT8h0ZNwd1V3VXEk/yvNELLLt8t8ojsacwIDAQAB
+AoGBAIMOjo4PTZO0Hi7Aye4nzTPZ0j4X9T139xUh0IvInzSVitBwOoM6fOvU6Iri
+oZm5yixsyfAoJQ3TeSZ5YeFxX8LfzMNAN3FRMObjvtqSxiKoqnwmu2wzUzvL895n
+9wh80BYT/gRzy30tep/hkQlx/mFTeJPGGEuVUJZzxeTpBH5BAkEAy33a3X/SQIne
+OkP7deb+zNl7/OaVlNNHSMrNfyDy4N83qWwCu6N77tRXx5Zw+y/UbuF76POUa7G8
+qs6KWs4m3QJBAOgxoABkN7GYt78CeAOhSt9oNt+CHgNbHI/iOtGwKVwIOmJyy3UD
+pNPLI6mEADdn8IWv4RLO/JXi2RJglDGiKY8CQBYWwU1N9LrAvHjCrGct/faqnQTk
+2tPe41wJd6kXIIY8dMRVTy6jHm7cafLmZ7k8hejLXTH6TuAp2PsJlIcq3ZkCQQCK
+0ri14zVFMmiRhBlbGkEYp0c/hJ0LJptCD2FZYzinNKgrmjS4plAS7L5KqIg0mCk+
+1LP9udFcj/92tFWGA01TAkAOdvnQ4kqhjaeG2phH2hS/VD4ty/HVUxj2rz/ztPkN
+Z+U83PeWromTJc873OxpFjfF5kQMNhO6R3s1nx7FEJTV
+-----END RSA PRIVATE KEY----- -"""
+PUBLIC_KEY =  """-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4kYCemK/gUqi+/j5Pk+N1Uozf
+RPr4BN2zeTAWq8iIirZ+dFT0ziOBh0N27fsjk+98oKrp9oXR7PBBaUV2LpFvgHUC
+RAGfDTZ6cx+gPaPeBTock791lDegh73bXBGshTbD+C1Gm8UxAT8h0ZNwd1V3VXEk
+/yvNELLLt8t8ojsacwIDAQAB
+-----END PUBLIC KEY----- -"""

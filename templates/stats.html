@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body class="w3-sand">
+	<div class="w3-bar w3-light-grey">
+		<div class="w3-bar-item w3-button" id="vote_summary">Votes summary</div>
+		<div class="w3-bar-item w3-button" id="voters_list">Voters list</div>
+	</div>
+	<div class="w3-container w3-content" id="vote_summary_result">
+		<div>
+			<h1 class="w3-xlarge"> Summary Vote Counts </h1>
+			<div id="vote_counts"></div>
+		</div>		
+	</div>
+	<div class="w3-container w3-content" id="voters_list_result">
+		<div id="voters">
+			<h1 class="w3-xlarge"> Voters Summary</h1>
+			<h4>Filter By:</h4>
+			<h5>batch:</h5>
+			<div id="batch">
+			<span>
+ 			   <input class="w3-check"  name="batch" type="checkbox" value="2012" checked/>
+    			<label for="batch">2012</label>
+    		</span>
+			<span>
+ 			   <input class="w3-check" name="batch" type="checkbox" value="2013" checked/>
+    			<label for="batch">2013</label>
+    		</span>				    						
+			<span>
+ 			   <input class="w3-check" name="batch" type="checkbox" value="2014" checked/>
+    			<label for="batch">2014</label>
+    		</span>				
+			<span>
+ 			   <input class="w3-check" name="batch" type="checkbox" value="2015" checked/>
+    			<label for="batch">2015</label>
+    		</span>				
+			<span>
+ 			   <input class="w3-check" name="batch" type="checkbox" value="2016" checked/>
+    			<label for="batch">2016</label>
+    		</span>				
+			<span>
+ 			   <input class="w3-check" name="batch" type="checkbox" value="2017" checked/>
+    			<label for="batch">2017</label>
+    		</span>	
+			<span>
+ 			   <input class="w3-check" name="batch" type="checkbox" value="2018" checked/>
+    			<label for="batch">2018</label>
+    		</span>	    					    		    		    		    		
+			</div>
+			<h5>voted</h5>
+			<div id="voted">
+			<span>
+ 			   <input class="w3-radio" name="voted" type="radio" value="1"/>
+    			<label for="voted">yes</label>
+    		</span>	
+			<span>
+ 			   <input class="w3-radio" name="voted" type="radio" value="0" checked/>
+    			<label for="voted">no</label>
+    		</span>	    						
+			</div>
+			<h5>count</h5>
+			<div id="count">
+			<span>
+ 			   <input class="w3-radio" name="count" type="radio" value="true"/>
+    			<label for="count">yes</label>
+    		</span>	
+			<span>
+ 			   <input class="w3-radio" name="count" type="radio" value="false" checked/>
+    			<label for="count">no</label>
+    		</span>	    						
+			</div>
+			<h3>Results:</h3>
+			<div class="w3-container" id="voters_result"></div>
+		</div>		
+	</div>	
+	<script type="text/javascript">
+      var html_element = function(el,attr){
+       
+        try{
+          
+          el = document.createElement(el);        
+
+          if(attr && attr.id){
+            el.id = attr.id;
+          }
+          if(attr && attr.class){
+            el.className = attr.class;
+          }
+          if(attr && attr.style) {
+           el.setAttribute("style", attr.style); 
+          }
+        }catch(e){
+          console.log(e);
+        }
+        finally{
+          return el;
+        }
+      } 		
+		var vote_counts = function(){
+			
+	        var request = new Request('/api/vote/count?token={{token}}', {
+	            method: 'GET',
+	            mode: 'cors',
+	            headers: new Headers({
+	                'Content-Type': 'application/json'
+	            })
+	        });			
+			fetch(request).then(function(response){
+				return response.json();
+			}).then(function(data){
+				for(i in data){
+					var position = html_element("div", attr={class:"w3-medium w3-container"});
+					position.innerHTML = "<h4>" + i.toUpperCase() + "</h4>";
+					for(j=0; j<data[i].length; j++){
+						for(k in data[i][j]){
+							var candidate = html_element("div", attr={class:"w3-container w3-light-grey"});
+							candidate.innerHTML = "<p>" +k +" "+data[i][j][k]+"</p>";
+							position.appendChild(candidate);
+						}
+					}
+					document.getElementById("vote_counts").appendChild(position);	
+				}
+				
+			});
+		}
+
+		var voters = function(filter){
+
+			try{
+				b = filter.batch;
+				v = filter.voted ? filter.voted : 0;
+				c = filter.count ? filter.count : 'false';
+
+				if(filter && b) {
+					filter="&batch="+filter.batch+"&voted="+v+"&count="+c;
+					console.log(filter);
+
+				}			
+			}
+			catch(e){
+				filter="&batch=2012,2013,2014,2015,2016,2017,2018";
+			}
+
+
+	        var request = new Request('/api/voters/all?token={{token}}'+filter, {
+	            method: 'GET',
+	            mode: 'cors',
+	            headers: new Headers({
+	                'Content-Type': 'application/json'
+	            })
+	        });			
+			fetch(request).then(function(response){
+				return response.json();
+			}).then(function(voters){
+				if(voters.count){
+					document.getElementById("voters_result").innerHTML= "Count: " + voters.count;
+				}else{
+					var lists = voters.list;
+					for(i=0; i<lists.length; i++){
+						var voter = html_element("div", attr={class:"w3-light-grey w3-container"});
+						voter.innerHTML = "Email: <a href='#' style='text-decoration:underlined;'>"+lists[i].email+"</a><br>"
+										+ "Name: "+lists[i].alumni_name+"<br>"
+										+ "Batch: "+lists[i].batch+"<hr>"	
+						document.getElementById("voters_result").appendChild(voter);
+					}
+				}
+
+			});			
+		}
+
+		document.addEventListener("change", function(e){
+			var selected = [];
+			var batches = document.getElementById("batch").querySelectorAll('input[type="checkbox"]');
+			for(var i=0; i<batches.length; i++){
+				if(batches[i].checked){
+					selected.push(batches[i].value);
+				}
+			}
+			var voted = document.querySelector('input[name="voted"]:checked').value;
+			var count = document.querySelector('input[name="count"]:checked').value;
+			document.getElementById("voters_result").innerHTML="";
+			batches = selected.join(',');
+			voters(filter={batch:batches,voted:voted,count:count});
+		});
+
+		document.getElementById("vote_summary").addEventListener("click",function(e){
+			document.getElementById("voters_list_result").style.display = "none";
+			document.getElementById("vote_summary_result").style.display = "block";
+			document.getElementById("vote_counts").innerHTML="";	
+			vote_counts();
+		});
+		document.getElementById("voters_list").addEventListener("click",function(e){
+			document.getElementById("vote_summary_result").style.display = "none";
+			document.getElementById("voters_list_result").style.display = "block";
+			document.getElementById("voters_result").innerHTML="";	
+			voters();
+		});
+
+		document.getElementById("voters_list_result").style.display = "none";
+		vote_counts();
+
+
+	</script>
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">	
+</body>
+</html>
