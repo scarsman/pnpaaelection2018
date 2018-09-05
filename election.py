@@ -1,5 +1,12 @@
+from orator import DatabaseManager
 from config import *
+from flask import Flask, abort, render_template,request, send_file, jsonify,url_for,redirect
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.utils import formataddr
+from email.header import Header
 
 import json
 import ujson
@@ -9,12 +16,6 @@ import hashlib
 import csv
 
 import time
-
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.utils import formataddr
-from email.header import Header
 
 
 db = DatabaseManager(DATABASES)
@@ -68,53 +69,63 @@ def generate_token():
 def send_email():
     msg = MIMEMultipart('alternative')
     msg['From'] = formataddr((str(Header('PNPAA ELECTION 2018', 'utf-8')), SMTP_USER))
-    #appears on cc
-    msg['To'] = CC_EMAIL
+    msg['To'] = "me"
+    #recipients = []
+    msg['Cc'] = CC_EMAIL
     msg['Subject'] = "PNPAA Election 2018"
 
     server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
     server.starttls()
     server.login(SMTP_USER, SMTP_USER_PASSWORD)
 
-    recipients = []
-    url = "http://localhost:9000"
+    url = "http://pnpaaelection.mooo.com"
 
-    while True:
-        users = db.table("voters").select("nickname","email","user_key").where("sent","=",0).limit(20).get().serialize()
+    is_ok_continue = True
 
+    while is_ok_continue:
+        
+        users = db.table("voters").select("alumni_name","email","user_key").where("sent","=",0).limit(20).get().serialize()
+        
+        if len(users) < 1 :
+            is_ok_continue = False
+            
+        
         for u in users:
             try:
-                #recipients.append(u.email);
                 email = u.email
-                #message = "PNPAA Election\nClick the link below to vote %s/token/%s " %(url,u.user_key)
+                name = u.alumni_name.split(",")
+                firtstname = name[1]
                 html = """\
                     <html>
                       <head></head>
                       <body>
                             <p>Hi %s,<br><br>
-                           Please <a href="%s/token/%s" target="_blank">click here to vote</a> on our next PNPAA officers. <br>
+                           Please <a href="%s/election/vote?user_key=%s" target="_blank">click here to vote</a> on our next PNPAA officers. <br>
                            Thank you. <br><br>
                            - PNPAA
                         </p>
                       </body>
                     </html>
-                    """ %(u.nickname,url,u.user_key)
+                    """ %(firtstname,url,u.user_key)
+                    
                 msg.attach(MIMEText(html, 'html'))
-                server.sendmail(msg['From'], email, msg.as_string())
-                db.table("voters").where('email', email).update({'sent': 1})
-
+ 
+                server.sendmail(msg['From'],[email,CC_EMAIL], msg.as_string())
+                db.table("voters").where('email', email).update({'sent': 1})  
+                
                 print "successfully sent to %s" %email
+                
 
             except:
                 pass
-
+        
+        time.sleep(5)
+        
         #allow multiple recipients
         #msg['To'] = ", ".join(recipients)
         #server.sendmail(msg['From'], recipients, msg.as_string())
 
-        time.sleep(500)
-        print "work work work"
     server.quit()
 
-insert_user()
-#send_email()
+#insert_user()
+send_email()
